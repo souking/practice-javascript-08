@@ -1,0 +1,79 @@
+今回はモーダルウィンドウを作る
+
+ボタンは扱いやすいようにdivタグで作る
+「id="mask"」は画面に覆い被さるグレーのマスクのためのタグ
+モーダルウィンドウは「section」タグで囲った
+
+
+ボタンのスタイリング
+bodyをスタイリング
+id属性の「#open」も「#close」も同じなのでまとめてスタイリング
+,（カンマ）区切りでセレクタを指定して、
+ボーダーは１pxの実線で灰色のボーダー
+paddingで上下の余白を指定して
+marginを上の方につけ、中央揃えにしたいので左右はautoにしつつ下のmarginは特に指定しない
+
+うっすらと灰色が背景になるように「#mask」のスタイリング
+色はrgbaで色は黒色にして透明度を0.4にした
+そして画面いっぱいに広がるように
+positionはfixedにして、topとbottomとright,leftをそれぞれ０にするとマスクの領域が画面いっぱいに広がる
+
+次はモーダルウィンドウの設定
+背景色は白色で配置する位置は、絶対領域を使う
+positionはabsoluteにして上から40pxぐらいの位置に指定
+左右中央に配置したい場合は、絶対配置の場合はleft,rightを０、左右のmarginをautoとすることで左右中央揃えになる
+
+ちなみに、positionのfixedはウィンドウの左上を基準としてx,y位置を取得して、スクロールされずにその場で表示される
+absoluteはrelative指定がされているboxを基準としてx,yのいちを取得して、スクロールについていく
+
+また、「#modal > p」の意味はmodal直下のpタグという意味
+ここに、pタグの周りのmariginが少し空いているのでmarginを０にして左右も0にして下は少し開けたいので20pxにした
+
+マスクとモーダルをopenボタンをクリックした時だけ表示させるために
+両方にhiddenクラスをつけた
+「#mask.hidden」は消すためにdisplayをnoneにした
+また、「#modal.hidden」はボタンをクリックすると上からシュッと現れるようにしたいのでhiddenの状態の時に画面の外の上の方に待機させておく
+transformプロパティのtranslate()を使う
+これは、X軸Y軸への距離の移動をすることができる
+なのでtlanslate(0, -500px)でx軸はそのままでy軸は-500px動かした
+
+次はjavascriptをスタイリング
+Javascriptを読み込むためにbodyタグの閉じタグの直前で<script></script>タグを書いた
+中身は、「'use strict;'」で厳密なエラーチェックをする
+また、全体を{}で囲う
+また、Javascriptで扱う要素を全て取得するために
+idをつけた要素を取得するので
+「document.getElementById('');」で取得
+「const open = document.getElementById('open');」
+上のようにすると、取得した要素をopenという定数で扱える
+
+
+ボタンを押した時にmodalやmaskが表示されるようにしていきたい
+openに対してEventListener を設定する
+これは、クリックした時に次の処理をしなさいよという意味
+中には、maskやmodalについているhiddenクラスを外してあげる
+classListプロパティを使う
+これは、要素についているぅラス名を追加したり、削除したりすることができる
+「
+open.addEventListener('click', () => {
+    modal.classList.remove('hidden');
+    mask.classList.remove('hidden');
+  })
+」
+とする
+次に、closeを押した時にmodalとmaskをつける
+今回は、remove()ではなくてadd()にする
+また、マスクをクリックした時にも閉じるようにする
+closeの中身の処理をそのままコピーしても良いが、
+中身を「close.click();」
+closeをクリックした時の処理をそのままに
+closeをclick()
+とすることでもうまくいく
+
+最後に、モーダルが上からアニメーションするように設定する
+cssでtransitionプロパティを設定する
+「#modal」のなかにtransition に対してtransformが変化する時には0.4秒かけて、という設定をする
+「transition: transform 0.4s;」
+
+また、htmlの方の要素の順番が変わってしまった時に、前後関係が変わってしまうので、z-indexを指定する
+数字が大きい方が、上に来る
